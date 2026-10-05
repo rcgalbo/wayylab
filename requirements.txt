@@ -1,0 +1,21 @@
+# wayyLab dashboard - deployable as-is on Streamlit Community Cloud.
+streamlit>=1.44          # st.container(key=...) is required for panel styling
+pandas>=2.2
+numpy>=1.26
+plotly>=5.20
+scipy>=1.11
+statsmodels>=0.14        # ADF/KPSS, ACF/PACF, ARIMA, coint, Granger
+arch>=6.0                # GARCH (F5)
+yfinance>=0.2
+pyarrow>=15.0            # parquet snapshots
+
+# NOT listed on purpose:
+#
+#   fractime  - F6's Hurst estimators. It is on PyPI, but installing it pulls
+#               pymc, prophet, pytensor and xgboost, which exceeds a free
+#               hosting build. lib/regime.py carries a pure-numpy fallback
+#               that reproduces fracTime's R/S and DFA to ~1e-14, so F6 works
+#               either way and the panel reports which backend is live.
+#               Locally: pip install --no-deps -e <path-to-fracTime>
+#
+#   polars    - only needed for the optional DataStream backend in lib/data.py
