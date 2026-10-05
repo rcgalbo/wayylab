@@ -1,20 +1,25 @@
-# wayyLab dashboard - deployable as-is on Streamlit Community Cloud.
-streamlit>=1.44          # st.container(key=...) is required for panel styling
-pandas>=2.2
-numpy>=1.26
-plotly>=5.20
-scipy>=1.11
-statsmodels>=0.14        # ADF/KPSS, ACF/PACF, ARIMA, coint, Granger
-arch>=6.0                # GARCH (F5)
-yfinance>=0.2
-pyarrow>=15.0            # parquet snapshots
+# wayyLab — deployable as-is on Streamlit Community Cloud.
+#
+# Upper bounds are deliberate. Without them a fresh build pulls plotly 7,
+# statsmodels 0.15 and streamlit 1.65, none of which this was tested against;
+# a submission should build the same way next month as it does today.
 
-# NOT listed on purpose:
+streamlit>=1.44,<2       # st.container(key=...) is required for panel styling
+pandas>=2.2,<4
+numpy>=1.26,<3
+plotly>=5.20,<7          # 6.x line; 7 is untested here
+scipy>=1.11,<2
+statsmodels>=0.14,<0.15  # ADF/KPSS, ACF/PACF, ARIMA, coint, Granger
+arch>=6.0,<9             # GARCH (F5)
+yfinance>=0.2,<2
+pyarrow>=15              # parquet snapshots
+
+# Deliberately absent:
 #
 #   fractime  - F6's Hurst estimators. It is on PyPI, but installing it pulls
 #               pymc, prophet, pytensor and xgboost, which exceeds a free
-#               hosting build. lib/regime.py carries a pure-numpy fallback
-#               that reproduces fracTime's R/S and DFA to ~1e-14, so F6 works
+#               hosting build. lib/regime.py carries pure-numpy R/S and DFA
+#               implementations that reproduce fracTime to ~1e-14, so F6 works
 #               either way and the panel reports which backend is live.
 #               Locally: pip install --no-deps -e <path-to-fracTime>
 #
