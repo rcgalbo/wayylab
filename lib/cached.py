@@ -14,13 +14,26 @@ from . import data
 TTL = 300  # 5 min - long enough to survive a demo, short enough to feel live
 
 
+def _trim(df: pd.DataFrame, years: float) -> pd.DataFrame:
+    """
+    Snapshots are frozen at maximum depth so every lookback is available from
+    one file. Without this the Lookback control does nothing in snapshot mode
+    and a 1Y selection silently shows 10Y.
+    """
+    if df.empty or years <= 0:
+        return df
+    cutoff = df.index.max() - pd.Timedelta(days=int(365.25 * years))
+    out = df[df.index >= cutoff]
+    return out if not out.empty else df
+
+
 @st.cache_data(ttl=TTL, show_spinner=False)
 def ohlcv(symbol: str, years: float = 5.0, interval: str = "1d",
           backend: str = "yfinance", source: str = "live") -> pd.DataFrame:
     if source == "snapshot":
         df = data.load_snapshot(symbol, interval)
         if not df.empty:
-            return df
+            return _trim(df, years)
     return data.fetch_ohlcv(symbol, years=years, interval=interval, backend=backend)
 
 
@@ -32,7 +45,7 @@ def panel(symbols: tuple[str, ...], years: float = 5.0,
         for s in symbols:
             df = data.load_snapshot(s)
             if not df.empty:
-                series[s.upper()] = df["close"]
+                series[s.upper()] = _trim(df, years)["close"]
         if series:
             return pd.DataFrame(series).sort_index().dropna(how="all")
     return data.fetch_panel(list(symbols), years=years, backend=backend)

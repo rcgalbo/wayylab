@@ -5,4 +5,6 @@ venv/
 .env
 .DS_Store
 .streamlit/secrets.toml
-data/snapshot/*.parquet
+# data/snapshot/*.parquet is intentionally COMMITTED: yfinance is often
+# rate-limited from shared cloud IPs, and the frozen copy keeps the
+# deployed app working (Source = snapshot) when live fetches fail.
